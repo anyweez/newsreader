@@ -1,0 +1,21 @@
+
+#news-viewer {
+    .source {
+        font-style: italic;
+    }
+
+    p.body {
+        font-weight: 300; 
+        font-size: 1.2em;
+    }
+
+    .label.correct {
+        font-weight: bold;
+        color: green;
+    }
+
+    .label.incorrect {
+        font-weight: bold;
+        color: red;
+    }
+}

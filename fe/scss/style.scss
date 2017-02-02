@@ -1,0 +1,9 @@
+@import '../node_modules/foundation-sites/scss/foundation';
+
+@include foundation-global-styles;
+@include foundation-grid;
+
+@import 'base';
+@import 'layout';
+
+@import 'components/news.viewer';

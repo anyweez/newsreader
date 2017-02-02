@@ -1,0 +1,32 @@
+
+header {
+    @include grid-row();
+    text-align: center;
+}
+
+main {
+    @include grid-row();
+
+    ul.articles {
+        padding: 0;
+        list-style-type: none;
+    }
+
+    .labels ul {
+        list-style-type: none;
+        padding: 0;
+
+        li {
+            display: inline-block;
+            width: 20%;
+        }
+    }
+}
+
+a {
+    text-decoration: none;
+}
+
+footer {
+    @include grid-row();
+}
