@@ -2,7 +2,7 @@ import json, rethinkdb, hashlib
 from flask import Flask, jsonify, request, send_from_directory
 
 MAX_RETURNED_ARTICLES = 2000
-NEWS_PATH = '/Users/luke/git/scraper/news/{}.html.txt'
+NEWS_PATH = '/home/luke/git/scraper/news/{}.html.txt'
 
 app = Flask(__name__)
 
@@ -59,11 +59,12 @@ def details(article_id):
 
             labels[label_name][label_text] = label_correct
 
-        for label, values in cursor['labels'].iteritems():
-            try:
-                cursor['labels'][label] = [{ 'text': value, 'correct': labels[label][value] } for value in values]
-            except KeyError:
-                cursor['labels'][label] = [{ 'text': value, 'correct': None } for value in values]
+	if 'labels' in cursor:
+            for label, values in cursor['labels'].iteritems():
+                try:
+                    cursor['labels'][label] = [{ 'text': value, 'correct': labels[label][value] } for value in values]
+                except KeyError:
+                    cursor['labels'][label] = [{ 'text': value, 'correct': None } for value in values]
 
     return jsonify(cursor)
 
@@ -97,4 +98,4 @@ def all_content(path):
     return send_from_directory('public', path)
 
 if __name__ == '__main__':
-    app.run()
+    app.run(host='0.0.0.0')
