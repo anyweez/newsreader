@@ -1,4 +1,4 @@
-import json, rethinkdb
+import json, rethinkdb, hashlib
 from flask import Flask, jsonify, request, send_from_directory
 
 MAX_RETURNED_ARTICLES = 2000
@@ -36,14 +36,60 @@ def all():
 ## Look up all of the details, including the full text, of a particular article.
 @app.route('/api/details/<string:article_id>')
 def details(article_id):
-    print(article_id)
-
     cursor = rethinkdb.db('news').table('metadata').get(article_id).run(md)
 
     with open(NEWS_PATH.format(cursor['filename'])) as fp:
         cursor['text'] = fp.read()
 
+        fb = rethinkdb.db('news').table('feedback').filter({ 'docid': article_id }).run(md)
+
+        # Mapping labels[label][value] = correct
+        #         labels['countries']['United States'] = True
+        labels = {}
+        for label in fb:
+            label_name = label['label']
+            label_text = label['text']
+            label_correct = label['correct']
+
+            if label_name not in labels:
+                labels[label_name] = {}
+
+            if label_text not in labels[label_name]:
+                labels[label_name][label_text] = None 
+
+            labels[label_name][label_text] = label_correct
+
+        for label, values in cursor['labels'].iteritems():
+            try:
+                cursor['labels'][label] = [{ 'text': value, 'correct': labels[label][value] } for value in values]
+            except KeyError:
+                cursor['labels'][label] = [{ 'text': value, 'correct': None } for value in values]
+
     return jsonify(cursor)
+
+
+"""
+POST /api/feedback
+
+Records feedback information about a particular label on a particular article. Can
+be used for computing stats after the fact.
+"""
+@app.route('/api/feedback', methods=['POST'])
+def feedback():
+    body = request.get_json(force=True)
+
+    hash = hashlib.md5()
+    hash.update('{}-{}-{}'.format(body['docid'], body['label'], body['text']))
+
+    rethinkdb.db('news').table('feedback').insert({
+        'id': hash.hexdigest(),
+        'correct': body['correct'],
+        'docid': body['docid'],
+        'label': body['label'],
+        'text': body['text']
+    }, conflict='update').run(md)
+
+    return ''
 
 @app.route('/', defaults={'path': 'index.html'})
 @app.route('/<path:path>')
