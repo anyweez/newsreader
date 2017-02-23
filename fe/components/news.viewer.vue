@@ -2,7 +2,7 @@
     <section id="news-viewer">
         <p><router-link :to="{ name: 'list' }">Back</router-link></p>
         <h2>{{ article.title }}</h2>
-        <p class="source"><a :href="article.url">original</a> from {{ article.source }}, added {{ article.added | date }}</p>
+        <p class="source"><a :href="article.url">original</a> from {{ article.source }}, published {{ article.published | date }}</p>
         <h4>Labels</h4>
         <ul>
             <li class="labels" v-for="label in article.labels">

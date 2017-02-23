@@ -5,7 +5,7 @@
         <ul class="articles">
             <li class="article" v-for="article in visible_articles">
                 <h2><router-link :to="{ name: 'details', params: { id: article.id } }">{{ article.title }}</a></h2>
-                <p>{{ article.added | date }} from {{ article.source }}</p>
+                <p>{{ article.published | date }} from {{ article.source }}</p>
             </li>
         </ul>
     </section>
