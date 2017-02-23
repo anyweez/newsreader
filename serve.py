@@ -44,7 +44,6 @@ def details(article_id):
         fb = rethinkdb.db('news').table('feedback').filter({ 'docid': article_id }).run(md)
 
         # Mapping labels[label][value] = correct
-        #         labels['countries']['United States'] = True
         labels = {}
         for label in fb:
             label_name = label['label']
@@ -61,10 +60,7 @@ def details(article_id):
 
     if 'labels' in cursor:
         for label, values in cursor['labels'].items():
-            try:
-                cursor['labels'][label] = [{ 'text': value, 'correct': labels[label][value] } for value in values]
-            except KeyError:
-                cursor['labels'][label] = [{ 'text': value, 'correct': None } for value in values]
+            cursor['labels'][label] = [{ 'text': value, 'correct': labels[label][value] if value in labels[label] else None } for value in values]
 
     return jsonify(cursor)
 
@@ -80,7 +76,7 @@ def feedback():
     body = request.get_json(force=True)
 
     hash = hashlib.md5()
-    hash.update('{}-{}-{}'.format(body['docid'], body['label'], body['text']))
+    hash.update('{}-{}-{}'.format(body['docid'], body['label'], body['text']).encode('utf-8'))
 
     rethinkdb.db('news').table('feedback').insert({
         'id': hash.hexdigest(),
