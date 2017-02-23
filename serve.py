@@ -59,12 +59,12 @@ def details(article_id):
 
             labels[label_name][label_text] = label_correct
 
-	if 'labels' in cursor:
-            for label, values in cursor['labels'].iteritems():
-                try:
-                    cursor['labels'][label] = [{ 'text': value, 'correct': labels[label][value] } for value in values]
-                except KeyError:
-                    cursor['labels'][label] = [{ 'text': value, 'correct': None } for value in values]
+    if 'labels' in cursor:
+        for label, values in cursor['labels'].items():
+            try:
+                cursor['labels'][label] = [{ 'text': value, 'correct': labels[label][value] } for value in values]
+            except KeyError:
+                cursor['labels'][label] = [{ 'text': value, 'correct': None } for value in values]
 
     return jsonify(cursor)
 

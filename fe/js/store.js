@@ -6,9 +6,6 @@ function prepare_article(raw) {
         return {
             name: label,
             values: raw.labels[label],
-            // values: raw.labels[label].map(value => {
-            //     return { value, correct: null };
-            // }),
         };
     });
 
@@ -44,7 +41,7 @@ export default new Vuex.Store({
         /* Fetch details for a particular article */
         fetch_details({ commit }, id) {
             return new Promise((resolve, reject) => {
-                fetch(`http://historian:5000/api/details/${id}`)
+                fetch(`/api/details/${id}`)
                     .then(resp => resp.json())
                     .then(resp => resolve(resp));
             });
@@ -53,7 +50,7 @@ export default new Vuex.Store({
         /* Fetch ALL summaries, or the # specified by 'count' */
         fetch_summaries({ commit }, count) {
             const url_param = count ? `?count=${ count }` : '';
-            fetch(`http://historian:5000/api/all${ url_param }`)
+            fetch(`/api/all${ url_param }`)
                 .then(resp => resp.json())
                 .then(resp => {
                     resp.forEach(article => commit('add_article', article));
