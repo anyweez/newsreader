@@ -59,8 +59,10 @@ def details(article_id):
             labels[label_name][label_text] = label_correct
 
     if 'labels' in cursor:
+        # Get all labels that exist on the document
         for label, values in cursor['labels'].items():
-            cursor['labels'][label] = [{ 'text': value, 'correct': labels[label][value] if value in labels[label] else None } for value in values]
+            if label in labels:
+                cursor['labels'][label] = [{ 'text': value, 'correct': labels[label][value] if value in labels[label] else None } for value in values]
 
     return jsonify(cursor)
 
