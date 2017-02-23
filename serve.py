@@ -63,6 +63,8 @@ def details(article_id):
         for label, values in cursor['labels'].items():
             if label in labels:
                 cursor['labels'][label] = [{ 'text': value, 'correct': labels[label][value] if value in labels[label] else None } for value in values]
+            else:
+                cursor['labels'][label] = [{ 'text': value, 'correct': None } for value in values]
 
     return jsonify(cursor)
 
