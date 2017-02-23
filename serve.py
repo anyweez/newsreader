@@ -29,7 +29,7 @@ def all():
     c = request.args.get('count')
     count = int(c) if c is not None else MAX_RETURNED_ARTICLES
 
-    cursor = rethinkdb.db('news').table('metadata').order_by(index='published').limit(count).run(md)
+    cursor = rethinkdb.db('news').table('metadata').order_by(index=r.desc('published')).limit(count).run(md)
 
     return jsonify([WebView(article).__dict__ for article in cursor])
 
